@@ -76,7 +76,7 @@ async def main():
     with open(CONFIG_FILE, "w", encoding="utf-8") as f:
         json.dump(config, f, indent=2)
 
-    print(f"\n✅ Configuration saved to {CONFIG_FILE}")
+    print(f"\n Configuration saved to {CONFIG_FILE}")
     print(f"Voice: {short_name}  |  Name: {full_name}")
     print(f"Rate: {rate}  |  Volume: {volume}  |  Pitch: {pitch}")
 
