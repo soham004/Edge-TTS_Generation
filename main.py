@@ -68,7 +68,7 @@ async def amain() -> None:
             # with open(os.path.join("inputFiles", story_dir, story_file), "r", encoding="utf-8") as f:
             #     TEXT = f.read()
             texts = split_text_by_period(os.path.join("inputFiles", story_dir, story_file), chunk_length)
-            semaphore = asyncio.Semaphore(5)  # Limit to n concurrent tasks
+            semaphore = asyncio.Semaphore(10)  # Limit to n concurrent tasks
             await asyncio.gather(*(generate_voice_with_limit(semaphore, text, output_file=(os.path.join("audioOutput", story_dir, story_file,f'{i}.mp3'))) for i,text in enumerate(texts)))
             subdir_path = os.path.join("audioOutput", story_dir, story_file)
             if os.path.isdir(subdir_path):  # Check if it's a directory
@@ -82,6 +82,7 @@ async def amain() -> None:
                     return int(match.group(1)) if match else float('inf')
 
                 mp3_files.sort(key=extract_first_number)
+                # print(f"Sorted mp3 files: {mp3_files}")
                 with open(os.path.join(subdir_path, "filelist.txt"), 'w') as f:
                     for mp3_file in mp3_files:
                         f.write(f"file '{mp3_file}'\n")
