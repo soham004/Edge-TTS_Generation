@@ -9,6 +9,7 @@ import os
 import edge_tts
 
 from modules.text_splicer import split_text_by_period
+from modules.cleanup import textCleanUp
 
 TEXT = """Deep beneath the streets of London, past the gleaming Atrium of the Ministry of Magic, beyond circular hallways of shifting doors, lies a chamber shrouded in more mystery than perhaps any other place in the wizarding world. The air here feels different – heavier, older somehow, as though the very atmosphere has been undisturbed for centuries. The whispers that echo through this room speak of secrets that even the most learned magical scholars do not fully comprehend.
 
@@ -69,7 +70,7 @@ async def amain() -> None:
             #     TEXT = f.read()
             texts = split_text_by_period(os.path.join("inputFiles", story_dir, story_file), chunk_length)
             semaphore = asyncio.Semaphore(10)  # Limit to n concurrent tasks
-            await asyncio.gather(*(generate_voice_with_limit(semaphore, text, output_file=(os.path.join("audioOutput", story_dir, story_file,f'{i}.mp3'))) for i,text in enumerate(texts)))
+            await asyncio.gather(*(generate_voice_with_limit(semaphore, textCleanUp(text), output_file=(os.path.join("audioOutput", story_dir, story_file,f'{i}.mp3'))) for i,text in enumerate(texts)))
             subdir_path = os.path.join("audioOutput", story_dir, story_file)
             if os.path.isdir(subdir_path):  # Check if it's a directory
                 mp3_files = [f for f in os.listdir(subdir_path) if f.endswith('.mp3')]
