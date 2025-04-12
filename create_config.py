@@ -37,6 +37,8 @@ def get_input_with_default(prompt, default, formatter):
     user_input = input(f"{prompt} (default {default}): ").strip()
     return formatter(user_input) if user_input else default
 
+
+
 async def main():
     print("Fetching available English voices...\n")
     voices = await edge_tts.list_voices()
@@ -63,6 +65,16 @@ async def main():
     volume = get_input_with_default("Enter volume (e.g., +0%, -5%, 10)", "+0%", format_percent)
     pitch = get_input_with_default("Enter pitch (e.g., +0Hz, -10Hz, 15)", "+0Hz", format_hz)
 
+    no_of_concurrent_folders_input = input("Enter number of concurrent folders (default 3): ").strip()
+    try:
+        no_of_concurrent_folders = int(no_of_concurrent_folders_input)
+    except ValueError:
+        print("Invalid number. Using default of 3.")
+        no_of_concurrent_folders = 3
+    
+
+
+
     config = {
         "gender": gender,
         "voice_short_name": short_name,
@@ -70,7 +82,8 @@ async def main():
         "chunk_length": chunk_length,
         "rate": rate,
         "volume": volume,
-        "pitch": pitch
+        "pitch": pitch,
+        "concurrent_folders": no_of_concurrent_folders,
     }
 
     with open(CONFIG_FILE, "w", encoding="utf-8") as f:
