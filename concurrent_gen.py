@@ -8,6 +8,7 @@ import shutil
 import re
 import os
 import edge_tts
+import win10toast
 
 from modules.text_splicer import split_text_by_period
 from modules.cleanup import textCleanUp
@@ -59,7 +60,7 @@ async def generate_voice_with_limit(semaphore, text, output_file:str) -> None:
 async def generate_voice_from_folders(story_dir:str, story_file:str, chunk_length:int) -> None:
     if not os.path.exists(os.path.join("audioOutput", story_dir, story_file)):
         os.makedirs(os.path.join("audioOutput", story_dir,story_file))
-    print(f"Processing {story_file}...")
+    print(f"Processing {story_dir} - '{story_file}'...")
 
     # with open(os.path.join("inputFiles", story_dir, story_file), "r", encoding="utf-8") as f:
     #     TEXT = f.read()
@@ -122,7 +123,7 @@ async def amain() -> None:
     # Get all story directories
     story_dirs = [f for f in os.listdir("inputFiles") if os.path.isdir(os.path.join("inputFiles", f))]
     if not story_dirs:
-        print("No stories found in the 'stories' directory.")
+        print("No stories found in the 'inputFiles' directory.")
         return
 
     folder_chunk_size = config['concurrent_folders']
@@ -130,32 +131,46 @@ async def amain() -> None:
     # Divide story directories into user-defined chunks
     chunks = list(chunk_list(story_dirs, folder_chunk_size))
 
-    # Display chunks to the user
-    print("Available chunks:")
-    for idx, chunk in enumerate(chunks):
-        print(f"{idx + 1}: {chunk}")
-
-    # Ask the user to select a chunk
     while True:
-        try:
-            selected_chunk = int(input(f"Select a chunk to process (1-{len(chunks)}): "))
-            if 1 <= selected_chunk <= len(chunks):
-                break
-            else:
-                print("Invalid selection. Please try again.")
-        except ValueError:
-            print("Invalid input. Please enter a number.")
+        # Display chunks to the user
+        print("\nAvailable chunks:")
+        for idx, chunk in enumerate(chunks):
+            print(f"{idx + 1}: {chunk}")
 
-    # Get the selected chunk
-    selected_dirs = chunks[selected_chunk - 1]
+        # Ask the user to select a chunk
+        while True:
+            try:
+                selected_chunk = int(input(f"Select a chunk to process (1-{len(chunks)}): "))
+                if 1 <= selected_chunk <= len(chunks):
+                    break
+                else:
+                    print("Invalid selection. Please try again.")
+            except ValueError:
+                print("Invalid input. Please enter a number.")
 
-    # Process the selected chunk with the user-defined concurrency
-    semaphore = asyncio.Semaphore(folder_chunk_size)  # Limit to user-defined concurrent folder processing tasks
-    await asyncio.gather(
-        *(process_directory(semaphore, story_dir, chunk_length) for story_dir in selected_dirs)
-    )
+        # Get the selected chunk
+        selected_dirs = chunks[selected_chunk - 1]
+
+        # Process the selected chunk with the user-defined concurrency
+        semaphore = asyncio.Semaphore(folder_chunk_size)  # Limit to user-defined concurrent folder processing tasks
+        await asyncio.gather(
+            *(process_directory(semaphore, story_dir, chunk_length) for story_dir in selected_dirs)
+        )
+
+        # Ask the user if they want to process another chunk
+        win10toast.ToastNotifier().show_toast(
+            "Processing Complete",
+            f"Processed chunk: {selected_dirs}",
+            duration=10,
+            threaded=True
+        )
+        process_another = input("Do you want to process another chunk? (yes/no): ").strip().lower()
+        if process_another != "yes":
+            print("Exiting program.")
+            break
 
 
 if __name__ == "__main__":
     asyncio.run(amain())
+
 
