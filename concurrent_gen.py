@@ -11,7 +11,6 @@ import edge_tts
 import win10toast
 
 from modules.text_splicer import split_text_by_period
-from modules.cleanup import textCleanUp
 
 
 async def generate_voice_using_config(text: str, output_file: str) -> None:
@@ -63,7 +62,7 @@ async def generate_voice_from_folders(story_dir:str, story_file:str, chunk_lengt
     #     TEXT = f.read()
     texts = split_text_by_period(os.path.join("inputFiles", story_dir, story_file), chunk_length)
     semaphore = asyncio.Semaphore(3)  # Limit to n concurrent tasks
-    await asyncio.gather(*(generate_voice_with_limit(semaphore, textCleanUp(text), output_file=(os.path.join("audioOutput", story_dir, story_file,f'{i}.mp3'))) for i,text in enumerate(texts)))
+    await asyncio.gather(*(generate_voice_with_limit(semaphore, text, output_file=(os.path.join("audioOutput", story_dir, story_file,f'{i}.mp3'))) for i,text in enumerate(texts)))
     subdir_path = os.path.join("audioOutput", story_dir, story_file)
     if os.path.isdir(subdir_path):  # Check if it's a directory
         mp3_files = [f for f in os.listdir(subdir_path) if f.endswith('.mp3')]

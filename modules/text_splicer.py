@@ -4,7 +4,7 @@ from modules.cleanup import textCleanUp
 def split_text_by_period(filename: str, limit: int) -> list:
     with open(filename, 'r', encoding='utf-8') as file:
         text = file.read().strip()
-        text = textCleanUp(text)  # Strip any extra whitespace at the start and end
+        text = textCleanUp(text)
     
     chunks = []
     start = 0
