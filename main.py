@@ -41,7 +41,7 @@ async def generate_voice_from_folders(story_dir:str, story_file:str, chunk_lengt
     # with open(os.path.join("inputFiles", story_dir, story_file), "r", encoding="utf-8") as f:
     #     TEXT = f.read()
     texts = split_text_by_period(os.path.join("inputFiles", story_dir, story_file), chunk_length)
-    semaphore = asyncio.Semaphore(10)  # Limit to n concurrent tasks
+    semaphore = asyncio.Semaphore(3)  # Limit to n concurrent tasks
     await asyncio.gather(*(generate_voice_with_limit(semaphore, textCleanUp(text), output_file=(os.path.join("audioOutput", story_dir, story_file,f'{i}.mp3'))) for i,text in enumerate(texts)))
     subdir_path = os.path.join("audioOutput", story_dir, story_file)
     if os.path.isdir(subdir_path):  # Check if it's a directory
