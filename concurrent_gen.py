@@ -132,7 +132,7 @@ async def amain() -> None:
         # Display chunks to the user
         print("\nAvailable chunks:")
         for idx, chunk in enumerate(chunks):
-            print(f"{idx + 1}: {chunk}")
+            print(f"{idx + 1}: {chunk}".replace("'", ""))
 
         # Ask the user to select a chunk
         while True:
