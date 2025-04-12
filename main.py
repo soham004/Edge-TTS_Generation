@@ -92,8 +92,6 @@ async def amain() -> None:
         for story_file in story_files:
             await generate_voice_from_folders(story_dir, story_file, chunk_length)
 
-
-
 if __name__ == "__main__":
     asyncio.run(amain())
 
