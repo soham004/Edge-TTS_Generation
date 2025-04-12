@@ -23,6 +23,6 @@ def textCleanUp(text:str) -> str:
 
     # Remove excessive spaces
     text = re.sub(r'\s+', ' ', text).strip()
-    text = text.replace("#", "").replace("*","")
+    text = text.replace("#", "").replace("*","").replace("-","")
     
     return text
