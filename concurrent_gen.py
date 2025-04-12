@@ -13,9 +13,6 @@ import win10toast
 from modules.text_splicer import split_text_by_period
 from modules.cleanup import textCleanUp
 
- 
-
-import asyncio
 
 async def generate_voice_using_config(text: str, output_file: str) -> None:
     """Generate voice using config file with retry logic."""
