@@ -11,8 +11,10 @@ import edge_tts
 from modules.text_splicer import split_text_by_period
 from modules.cleanup import textCleanUp
 
- 
 
+with open("config.json", "r") as f:
+    config = json.load(f)
+ 
 async def generate_voice_using_config(text:str, output_file:str) -> None:
     """Generate voice using config file"""
     with open("config.json", "r") as f:
@@ -26,10 +28,6 @@ async def generate_voice_using_config(text:str, output_file:str) -> None:
         pitch=config['pitch']
     )
     await communicate.save(output_file)
-
-
-with open("config.json", "r") as f:
-    config = json.load(f)
 
 async def generate_voice_with_limit(semaphore, text, output_file:str) -> None:
     async with semaphore:
