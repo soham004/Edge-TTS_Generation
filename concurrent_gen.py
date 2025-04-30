@@ -79,7 +79,7 @@ async def generate_voice_from_folders(story_dir:str, story_file:str, chunk_lengt
         with open(os.path.join(subdir_path, "filelist.txt"), 'w') as f:
             for mp3_file in mp3_files:
                 f.write(f"file '{mp3_file}'\n")
-        cmd = fr'''cd "{subdir_path}" && ffmpeg -y -f concat -safe 0 -i filelist.txt -c copy "..\{story_file.replace(".txt", "").replace(".md", "")}.mp3" && cd ..\..'''
+        cmd = fr'''cd "{subdir_path}" && ..\..\..\modules\ffmpeg\bin\ffmpeg -y -f concat -safe 0 -i filelist.txt -c copy "..\{story_file.replace(".txt", "").replace(".md", "")}.mp3" && cd ..\..'''
         subprocess.run(
             cmd,
             shell=True,
