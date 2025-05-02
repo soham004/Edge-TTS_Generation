@@ -7,9 +7,17 @@ import shutil
 import re
 import os
 import edge_tts
-
+import logging
 from modules.text_splicer import split_text_by_period
 
+"""Crashes if the chunk is one character long if that character is a special character."""
+
+
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(levelname)s - %(message)s',
+    filename='log.txt',
+)
 
 with open("config.json", "r") as f:
     config = json.load(f)
@@ -40,6 +48,8 @@ async def generate_voice_from_folders(story_dir:str, story_file:str, chunk_lengt
     # with open(os.path.join("inputFiles", story_dir, story_file), "r", encoding="utf-8") as f:
     #     TEXT = f.read()
     texts = split_text_by_period(os.path.join("inputFiles", story_dir, story_file), chunk_length)
+    logging.info(f"Splitting text into {len(texts)} chunks.")
+    logging.info(f"Text array: {texts}")
     semaphore = asyncio.Semaphore(3)  # Limit to n concurrent tasks
     await asyncio.gather(*(generate_voice_with_limit(semaphore, text, output_file=(os.path.join("audioOutput", story_dir, story_file,f'{i}.mp3'))) for i,text in enumerate(texts)))
     subdir_path = os.path.join("audioOutput", story_dir, story_file)
