@@ -25,9 +25,9 @@ def split_text_by_period(filename: str, limit: int) -> list:
             break
 
         # Look for the nearest period (.) or question mark (?) after the limit
-        stop_pos = text.find('.', end)
-        qmark_pos = text.find('?', end)
-        excl_pos = text.find('!', end)  # Also consider exclamation marks
+        stop_pos = text.find('.', int(end))
+        qmark_pos = text.find('?', int(end))
+        excl_pos = text.find('!', int(end))  # Also consider exclamation marks
 
         # Find the nearest valid stopping position
         if stop_pos == -1:
